@@ -1,5 +1,5 @@
 import {v2 as cloudinary} from 'cloudinary';
-import productModel from '../models/productModel.js';
+import productModel from '../models/productModels.js';
 
 
 //function for add product to database
@@ -25,7 +25,7 @@ const addProduct = async (req, res) => {
         const productData={
             name,
             description,
-            price:number(price),
+            price:Number(price),
             category,
             subcategory,
             bestseller: bestseller === 'true' ? true : false,
