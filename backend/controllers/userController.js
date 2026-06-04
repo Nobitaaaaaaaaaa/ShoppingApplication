@@ -80,9 +80,15 @@ const registerUser =async (req, res) => {
 // Route for admin login
 const adminLogin =async (req, res) => {
     try{
-        const {email,password} = req.body;
+        const {email, password} = req.body;
+        const adminEmail = process.env.ADMIN_EMAIL;
+        const adminPassword = process.env.ADMIN_PASSWORD;
 
-        if(email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD){
+        if (!adminEmail || !adminPassword) {
+            return res.status(500).json({message: 'Admin credentials are not configured on the server'});
+        }
+
+        if(email?.trim() === adminEmail && password === adminPassword){
             const token = jwt.sign({email, password}, process.env.JWT_SECRET, {expiresIn: '7d'});
             
             res.json({success: true, token});
