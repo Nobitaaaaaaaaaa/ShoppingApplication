@@ -3,6 +3,7 @@ import {assets} from '../assets/assets'
 import {useState} from 'react'
 import axios from 'axios';
 import { backendUrl } from '../App';
+import { toast } from 'react-toastify';
 
 const Add = ({token}) => {
 
@@ -15,8 +16,8 @@ const Add = ({token}) => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
-  const [category, setCategory] = useState('');
-  const [subCategory, setSubCategory] = useState('');
+  const [category, setCategory] = useState('Men');
+  const [subCategory, setSubCategory] = useState('Topwear');
   const [bestseller, setBestseller] = useState(false);
   const [sizes, setSizes] = useState([]);
 
@@ -32,15 +33,32 @@ const Add = ({token}) => {
       formData.append('subCategory', subCategory);
       formData.append('bestseller', bestseller);
       formData.append('sizes', JSON.stringify(sizes));
-      if(image1) formData.append('images', image1);
-      if(image2) formData.append('images', image2);
-      if(image3) formData.append('images', image3);
-      if(image4) formData.append('images', image4);
+      if(image1) formData.append('image1', image1);
+      if(image2) formData.append('image2', image2);
+      if(image3) formData.append('image3', image3);
+      if(image4) formData.append('image4', image4);
       
 
       const response = await axios.post(backendUrl + "/api/product/add", formData,{headers: {token}});
+console.log(response.data);
+      if(response.data.success){
+        {
+          toast.success("Product added successfully");
+          setName('');
+          setDescription('');
+          setPrice('');
+          setImage1(false);
+          setImage2(false);
+          setImage3(false);
+          setImage4(false);
+        }
+      }else{
+        toast.error(response.data.message );
+      }
 
     }catch(err){
+      console.log(err);
+      toast.error("Error adding product");
 
     }
   }
@@ -48,6 +66,7 @@ const Add = ({token}) => {
   
 
   return (
+    
     <form onSubmit={onSubmitHandler} className='flex flex-col w-full items-start gap-3'>
       <div>
         <p className='mb-2'>Upload Image</p>

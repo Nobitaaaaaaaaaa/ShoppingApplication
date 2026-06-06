@@ -14,7 +14,7 @@ const productSchema=new mongoose.Schema({
         required:true
     },
     image:{
-        type:String,
+        type:Array,
         required:true   
     },
     category:{
@@ -25,14 +25,14 @@ const productSchema=new mongoose.Schema({
         type:String,
         required:true   
     },
-    size:{
-        type:String,
+    sizes:{
+        type:Array,
         required:true
     },
-    bestSeller:{
+    bestseller:{
         type:Boolean,
     },
-    data:{
+    date:{
         type: Number,
         required:true
     }

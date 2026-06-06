@@ -4,8 +4,9 @@ import productModel from '../models/productModels.js';
 
 //function for add product to database
 const addProduct = async (req, res) => {
+  
     try{
-        const {name , description , price , category , subcategory , sizes , bestseller} = req.body;
+        const {name , description , price , category , subCategory , sizes , bestseller} = req.body;
 
         const image1=req.files.image1 && req.files.image1[0];
         const image2= req.files.image2 && req.files.image2[0];
@@ -22,25 +23,26 @@ const addProduct = async (req, res) => {
             })
         );
 
+       
         const productData={
             name,
             description,
             price:Number(price),
             category,
-            subcategory,
+            subCategory,
             bestseller: bestseller === 'true' ? true : false,
             sizes: JSON.parse(sizes),
-            images: imagesUrl,
+            image: imagesUrl,
             date: Date.now()
         }
 
         const product = new productModel(productData);
         await product.save();
 
-        res.status(201).json({message: 'Product added successfully'});
+        res.status(201).json({success: true, message: 'Product added successfully'});
     }catch(error){
         console.log('Error:', error);
-        res.status(500).json({message: 'Error adding product', error});
+        res.status(500).json({success: false, message: 'Error adding product', error});
     }
 }
 
@@ -49,10 +51,10 @@ const listProducts = async (req, res) => {
 
     try{
         const products = await productModel.find({});
-        res.json(products);
+        res.json({ success: true, products });
         
     }catch(error){
-        res.status(500).json({message: 'Error fetching products', error});
+        res.status(500).json({success: false, message: 'Error fetching products', error});
 
     }
 
@@ -63,10 +65,10 @@ const removeProduct = async (req, res) => {
 
     try{
         await productModel.findByIdAndDelete(req.body.id);
-        res.json({message: 'Product removed successfully'});
+        res.json({success: true, message: 'Product removed successfully'});
     }
     catch(error){
-        res.status(500).json({message: 'Error removing product', error});
+        res.status(500).json({success: false, message: 'Error removing product', error});
     }
 
 }
@@ -79,7 +81,7 @@ const singleProduct = async (req, res) => {
         const product = await productModel.findById(productId);
         res.json(product);
     }catch(error){
-        res.status(500).json({message: 'Error fetching product', error});
+        res.status(500).json({success: false, message: 'Error fetching product', error});
     }
 
 }
