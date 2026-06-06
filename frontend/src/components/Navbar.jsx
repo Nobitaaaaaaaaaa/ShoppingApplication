@@ -2,13 +2,20 @@ import React from 'react'
 import { assets } from '../assets/assets'
 import { NavLink, Link } from 'react-router-dom'
 import { useContext } from 'react'
-import { ShopContext } from '../context/ShopContext'
+import { ShopContext } from '../context/ShopContextData.jsx'
 
 
 const Navbar = () => {
 
   const [visible, setVisible] = React.useState(false)
-  const { setShowSearch ,getCartCount } = useContext(ShopContext)
+  const { setShowSearch, getCartCount, token, setToken, setCartItems, navigate } = useContext(ShopContext)
+
+  const logout = () =>{
+    localStorage.removeItem('token');
+    setToken('');
+    setCartItems({});
+    navigate('/login');
+  }
 
   return (
     <div className='flex items-center justify-between py-5 font-medium'>
@@ -47,17 +54,19 @@ const Navbar = () => {
 
         <div className='group relative'>
 
-          <Link to='/login'><img src={assets.profile_icon} className='w-5 cursor-pointer' /></Link>
-
+          <img onClick={()=> token ? null : navigate('/login')} src={assets.profile_icon} className='w-5 cursor-pointer' />
+          {/* Dropdown */}
+          {token && 
           <div className='group-hover:block hidden absolute dropdown-menu right-0 pt-4'>
 
             <div className='flex flex-col gap-2 w-36 py-3 px-5 bg-slate-100 rounded-lg shadow-lg'>
-              <p className='cursor-pointer hover:text-black'>Orders</p>
-              <p className='cursor-pointer hover:text-black'>My Profile</p>
-              <p className='cursor-pointer hover:text-black'>Logout</p>
+              <p onClick={() => navigate('/orders')} className='cursor-pointer hover:text-black'>Orders</p>
+              <p onClick={() => navigate('/profile')} className='cursor-pointer hover:text-black'>My Profile</p>
+              <button type='button' onClick={logout} className='cursor-pointer text-left text-black transition-colors hover:text-black'>Logout</button>
             </div>
 
-          </div>
+          </div>}
+          
 
         </div>
 
@@ -65,7 +74,7 @@ const Navbar = () => {
 
           <img src={assets.cart_icon} className='w-5 cursor-pointer' />
 
-          <p className='absolute right-[-5px] -bottom-1.25 w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[8px]'>
+          <p className='absolute -right-1.25 -bottom-1.25 w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[8px]'>
             {getCartCount()}
           </p>
 

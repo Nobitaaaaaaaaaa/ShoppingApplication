@@ -1,5 +1,5 @@
 import React from 'react'
-import {ShopContext} from '../context/ShopContext'
+import {ShopContext} from '../context/ShopContextData.jsx'
 import {Link} from 'react-router-dom'
 import { useContext } from 'react'
 
