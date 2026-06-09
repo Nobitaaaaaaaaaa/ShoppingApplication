@@ -86,5 +86,16 @@ const singleProduct = async (req, res) => {
 
 }
 
-export {addProduct, listProducts, removeProduct, singleProduct};
+const updateStatus = async (req, res) => {
+    try{
+        const {orderId, status} = req.body;
+        await orderModel.findByIdAndUpdate(orderId, {status});
+        res.json({success: true, message: 'Status updated successfully'});
+
+    }catch(error){
+        res.status(500).json({success: false, message: 'Error updating order status', error});
+    }  
+}
+
+export {addProduct, listProducts, removeProduct, singleProduct, updateStatus};
 

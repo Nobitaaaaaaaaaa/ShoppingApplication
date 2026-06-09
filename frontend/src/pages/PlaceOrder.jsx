@@ -7,6 +7,7 @@ import { assets } from '../assets/assets';
 import axios from 'axios'
 import { toast } from 'react-toastify'
 
+
 const PlaceOrder = () => {
   const { cartItems,setCartItems,getCartAmount , delivery_fee , products } = useContext(ShopContext)
   const {navigate , backendUrl ,token  } = useContext(ShopContext)
@@ -29,6 +30,37 @@ const PlaceOrder = () => {
     const value = e.target.value
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
+
+  const initPay=(order, razorpayKey)=>{
+    const options={
+      key: razorpayKey || import.meta.env.RAZORPAY_KEY_ID,
+      amount: order.amount,
+      currency: order.currency,
+      description: 'Order Payment',
+      order_id: order.id,
+      handler:async(response)=>{
+        console.log(response);
+        try{
+          const {data} = await axios.post(backendUrl + '/api/order/verifyRazorpay', response, { headers: { token } });
+          if(data.success){
+            setCartItems({});
+            navigate('/orders');
+          } else {
+            toast.error(data.message || "Payment verification failed");
+          }
+        }catch(error){
+          console.log(error);
+          toast.error(error.message);
+        }
+      }
+
+    }
+    const rzp = new window.Razorpay(options); 
+    rzp.open();
+  }
+
+  
+
   const onSubmitHandler = async (e) => {
     e.preventDefault();
    
@@ -75,9 +107,29 @@ const PlaceOrder = () => {
             }
             break;
 
+          //stripe
+          case 'stripe':
+            const responseStripe = await axios.post(backendUrl + '/api/order/stripe', orderData, {headers:{token}});
+            if(responseStripe.data.success){
+              const {session_url} = responseStripe.data;
+              window.location.replace(session_url);
+            }else{
+              toast.error(responseStripe.data.message);
+            }
+            break;
+          
+          case 'razorpay':
+            const responseRazorpay = await axios.post(backendUrl + '/api/order/razorpay', orderData, {headers:{token}});
+            if(responseRazorpay.data.success){
+              initPay(responseRazorpay.data.order, responseRazorpay.data.razorpayKey);
+            }
+            break;
+
             default:{
               break;
             }
+
+
           }
 
 
