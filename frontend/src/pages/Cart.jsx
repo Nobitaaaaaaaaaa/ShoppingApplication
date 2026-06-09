@@ -4,10 +4,11 @@ import { useContext, useEffect, useState } from 'react'
 import Title from '../components/Title';
 import { assets } from '../assets/assets';
 import CartTotal from '../components/CartTotal';
+import { toast } from 'react-toastify';
 
 const Cart = () => {
 
-  const {products, currency ,cartItems, updateQuantity ,navigate} = useContext(ShopContext);
+  const {products, currency ,cartItems, updateQuantity ,navigate, token} = useContext(ShopContext);
   const [cartData,setCartData] = useState([]);
 
   useEffect(() => {
@@ -78,7 +79,14 @@ const Cart = () => {
           <CartTotal />
 
           <div className= 'w-full text-end'>
-            <button onClick={() => navigate('/place-order')} className = 'bg-black text-white text-sm  px-8 py-3'>Process to Checkout</button>
+            <button onClick={() => {
+              if (!token) {
+                toast.error('Please login to place an order');
+                navigate('/login');
+              } else {
+                navigate('/place-order');
+              }
+            }} className = 'bg-black text-white text-sm  px-8 py-3'>Process to Checkout</button>
           </div>
           
         </div>

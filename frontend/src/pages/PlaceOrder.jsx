@@ -1,7 +1,7 @@
 import React from 'react'
 import Title from '../components/Title'
 import CartTotal from '../components/CartTotal'
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import { ShopContext } from '../context/ShopContextData.jsx'
 import { assets } from '../assets/assets';
 import axios from 'axios'
@@ -11,6 +11,13 @@ import { toast } from 'react-toastify'
 const PlaceOrder = () => {
   const { cartItems,setCartItems,getCartAmount , delivery_fee , products } = useContext(ShopContext)
   const {navigate , backendUrl ,token  } = useContext(ShopContext)
+
+  useEffect(() => {
+    if (!token) {
+      toast.error('Please login to place an order');
+      navigate('/login');
+    }
+  }, [token]);
 
   const [method, setMethod] = React.useState('cod')
 
